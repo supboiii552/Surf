@@ -6,21 +6,22 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [
       react(),
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
         manifest: {
-          id: '/',
+          id: './',
           name: 'Physics Vector Lab — 3D Simulator',
           short_name: 'PhysicsLab',
           description: '3D Kinematics and Velocity Trajectory Simulation Lab',
           theme_color: '#020617',
           background_color: '#020617',
           display: 'standalone',
-          start_url: '/',
-          scope: '/',
+          start_url: './',
+          scope: './',
           icons: [
             {
               src: '/icon.svg',

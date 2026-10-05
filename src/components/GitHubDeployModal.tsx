@@ -1,10 +1,11 @@
 /**
  * GitHub Pages Deployment Helper Modal
- * Explains how to deploy to your personal github.io address to bypass school filters permanently.
+ * Explains how to deploy to your personal github.io address to bypass school filters permanently,
+ * and how the base: './' fix solves the white screen issue.
  */
 
 import React, { useState } from 'react';
-import { Github, Copy, Check, ExternalLink, X, ShieldCheck } from 'lucide-react';
+import { Github, Copy, Check, ExternalLink, X, ShieldCheck, AlertCircle } from 'lucide-react';
 
 interface GitHubDeployModalProps {
   onClose: () => void;
@@ -13,6 +14,12 @@ interface GitHubDeployModalProps {
 export const GitHubDeployModal: React.FC<GitHubDeployModalProps> = ({ onClose }) => {
   const [copiedWorkflow, setCopiedWorkflow] = useState(false);
   const [copiedCommands, setCopiedCommands] = useState(false);
+  const [copiedFixCommands, setCopiedFixCommands] = useState(false);
+
+  const whiteScreenFixCommands = `# Push the relative base path fix to GitHub:
+git add vite.config.ts public/.nojekyll
+git commit -m "Fix GitHub Pages white screen via relative base: './'"
+git push origin main`;
 
   const workflowYaml = `name: Deploy to GitHub Pages
 
@@ -60,7 +67,7 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4`;
 
-  const terminalCommands = `# 1. Create a new empty repository on github.com (e.g. named "surf")
+  const terminalCommands = `# 1. Create a new repository on github.com (e.g. named "surf")
 # 2. In your terminal, initialize and push:
 git init
 git add .
@@ -69,8 +76,8 @@ git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/surf.git
 git push -u origin main
 
-# 3. On GitHub: go to Repo Settings -> Pages -> Source: select "GitHub Actions"
-# In 1 minute, your unblocked game will be live at:
+# 3. On GitHub: Repo Settings -> Pages -> Source: select "GitHub Actions"
+# In ~1 minute, your unblocked game is live at:
 # https://YOUR_USERNAME.github.io/surf/`;
 
   const copyToClipboard = (text: string, setCopied: (val: boolean) => void) => {
@@ -98,28 +105,61 @@ git push -u origin main
         </div>
 
         <div className="space-y-4 overflow-y-auto text-sm text-slate-300">
-          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+          {/* White screen alert banner */}
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <h3 className="font-bold text-emerald-300 text-sm mb-1">Why GitHub Pages Works</h3>
-              <p className="text-xs text-emerald-200/80 leading-relaxed">
-                School firewalls block generic hosting providers (Vercel, Netlify, Glitch, Koyeb) because of automated blocklists. Because schools rely heavily on GitHub for computer science curriculum, <strong className="text-white">github.io is almost always whitelisted</strong>!
+              <h3 className="font-bold text-amber-300 text-sm mb-1">Fix for White Screen on GitHub Pages</h3>
+              <p className="text-xs text-amber-200/80 leading-relaxed mb-2">
+                A white screen occurs when Vite uses absolute paths (<code className="text-white">/assets/...</code>) on a sub-path repo (<code className="text-white">username.github.io/repo-name/</code>).
+              </p>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                We have added <code className="text-amber-300 font-bold">base: &apos;./&apos;</code> in <code className="text-white">vite.config.ts</code> and created <code className="text-white">public/.nojekyll</code>. Simply push these changes to GitHub and the white screen will be resolved!
               </p>
             </div>
           </div>
 
-          {/* Step 1: Terminal commands */}
+          {/* Quick Push Fix commands */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-xs uppercase tracking-wider text-slate-400 font-bold">
-                1. Push to your GitHub repository
+                Quick Push Fix Commands:
+              </h3>
+              <button
+                onClick={() => copyToClipboard(whiteScreenFixCommands, setCopiedFixCommands)}
+                className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
+              >
+                {copiedFixCommands ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedFixCommands ? 'Copied!' : 'Copy Fix Commands'}</span>
+              </button>
+            </div>
+            <pre className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-xs text-emerald-300 overflow-x-auto whitespace-pre">
+              {whiteScreenFixCommands}
+            </pre>
+          </div>
+
+          <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-bold text-emerald-300 text-sm mb-1">Why GitHub Pages Works on School Wi-Fi</h3>
+              <p className="text-xs text-emerald-200/80 leading-relaxed">
+                School firewalls block generic platforms (Vercel, Netlify, Glitch, Koyeb). Because schools rely on GitHub for education, <strong className="text-white">github.io is almost always whitelisted</strong>!
+              </p>
+            </div>
+          </div>
+
+          {/* Step 1: Initial push */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                First-time Setup Commands
               </h3>
               <button
                 onClick={() => copyToClipboard(terminalCommands, setCopiedCommands)}
                 className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
               >
                 {copiedCommands ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedCommands ? 'Copied Commands!' : 'Copy Commands'}</span>
+                <span>{copiedCommands ? 'Copied!' : 'Copy Setup Commands'}</span>
               </button>
             </div>
             <pre className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto whitespace-pre">
@@ -131,7 +171,7 @@ git push -u origin main
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-xs uppercase tracking-wider text-slate-400 font-bold">
-                2. Automated Deploy Workflow (`.github/workflows/deploy.yml`)
+                GitHub Action Workflow (`.github/workflows/deploy.yml`)
               </h3>
               <button
                 onClick={() => copyToClipboard(workflowYaml, setCopiedWorkflow)}
@@ -141,13 +181,9 @@ git push -u origin main
                 <span>{copiedWorkflow ? 'Copied YAML!' : 'Copy Workflow YAML'}</span>
               </button>
             </div>
-            <pre className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-xs text-slate-400 max-h-48 overflow-y-auto whitespace-pre">
+            <pre className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 font-mono text-xs text-slate-400 max-h-40 overflow-y-auto whitespace-pre">
               {workflowYaml}
             </pre>
-          </div>
-
-          <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-400">
-            <strong className="text-white">Note for GitHub Pages sub-path:</strong> If your repository is named <code className="text-amber-300">surf</code>, make sure <code className="text-white">vite.config.ts</code> has <code className="text-white">base: &apos;/surf/&apos;</code> or leave as relative path so all assets load seamlessly.
           </div>
         </div>
 
