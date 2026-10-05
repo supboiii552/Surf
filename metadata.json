@@ -1,0 +1,6 @@
+{
+  "name": "CS2 Surf: Utopia & Maps",
+  "description": "3D Counter-Strike surf simulator featuring surf_utopia_njv, authentic Source ramp physics, customizable iPad touch controls, and speedrunner HUD.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
