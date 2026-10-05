@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { GameSettings, TouchLayoutType, TouchButtonSize, PhysicsPreset } from '../types';
 import { StealthPreset, applyStealthPreset } from '../utils/stealth';
-import { X, Sliders, Gamepad2, Monitor, Volume2, Shield, EyeOff, Download, Github, BookOpen } from 'lucide-react';
+import { X, Sliders, Gamepad2, Monitor, Volume2, Shield, EyeOff, Download, Github, BookOpen, Cloud } from 'lucide-react';
 import { surfAudio } from '../audio/surfAudio';
 
 interface SettingsModalProps {
@@ -15,6 +15,7 @@ interface SettingsModalProps {
   onClose: () => void;
   onOpenPWAInstall?: () => void;
   onOpenGitHubDeploy?: () => void;
+  onOpenCloudflareDeploy?: () => void;
   onTriggerPanic?: () => void;
 }
 
@@ -24,6 +25,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onClose,
   onOpenPWAInstall,
   onOpenGitHubDeploy,
+  onOpenCloudflareDeploy,
   onTriggerPanic,
 }) => {
   const [activeTab, setActiveTab] = useState<'controls' | 'physics' | 'visuals' | 'stealth'>('controls');
@@ -577,8 +579,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 )}
               </div>
 
-              {/* Offline & GitHub Actions */}
+              {/* Offline & Deployment Actions */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {onOpenCloudflareDeploy && (
+                  <button
+                    onClick={() => {
+                      onClose();
+                      onOpenCloudflareDeploy();
+                    }}
+                    className="p-3.5 rounded-2xl bg-orange-500/10 border border-orange-500/30 text-orange-300 text-left hover:bg-orange-500/20 transition-colors flex items-center justify-between sm:col-span-2"
+                  >
+                    <div>
+                      <span className="text-xs font-bold block flex items-center gap-1.5">
+                        <span>Deploy to Cloudflare Pages</span>
+                        <span className="text-[10px] bg-orange-500/20 text-orange-300 px-1.5 py-0.5 rounded font-mono">Recommended</span>
+                      </span>
+                      <span className="text-[11px] text-orange-200/70">Automatic Vite build on push · *.pages.dev (unblocked)</span>
+                    </div>
+                    <Cloud className="w-5 h-5 text-orange-400 shrink-0 ml-2" />
+                  </button>
+                )}
+
                 {onOpenPWAInstall && (
                   <button
                     onClick={() => {

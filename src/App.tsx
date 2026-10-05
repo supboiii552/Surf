@@ -16,6 +16,7 @@ import { TutorialModal } from './components/TutorialModal';
 import { PanicScreen } from './components/PanicScreen';
 import { PWAInstallModal } from './components/PWAInstallModal';
 import { GitHubDeployModal } from './components/GitHubDeployModal';
+import { CloudflareDeployModal } from './components/CloudflareDeployModal';
 import { surfAudio } from './audio/surfAudio';
 import { applyStealthPreset, getSavedStealthPreset } from './utils/stealth';
 
@@ -93,6 +94,7 @@ export default function App() {
   const [isPanicActive, setIsPanicActive] = useState(false);
   const [isPWAInstallOpen, setIsPWAInstallOpen] = useState(false);
   const [isGitHubDeployOpen, setIsGitHubDeployOpen] = useState(false);
+  const [isCloudflareDeployOpen, setIsCloudflareDeployOpen] = useState(false);
 
   // Input state shared ref (polled by simulation loop)
   const inputsRef = useRef<InputState>({
@@ -290,6 +292,7 @@ export default function App() {
           onClose={() => setIsSettingsOpen(false)}
           onOpenPWAInstall={() => setIsPWAInstallOpen(true)}
           onOpenGitHubDeploy={() => setIsGitHubDeployOpen(true)}
+          onOpenCloudflareDeploy={() => setIsCloudflareDeployOpen(true)}
           onTriggerPanic={() => setIsPanicActive(true)}
         />
       )}
@@ -316,6 +319,10 @@ export default function App() {
 
       {isGitHubDeployOpen && (
         <GitHubDeployModal onClose={() => setIsGitHubDeployOpen(false)} />
+      )}
+
+      {isCloudflareDeployOpen && (
+        <CloudflareDeployModal onClose={() => setIsCloudflareDeployOpen(false)} />
       )}
     </div>
   );
